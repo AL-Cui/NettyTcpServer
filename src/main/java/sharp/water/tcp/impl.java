@@ -501,40 +501,40 @@ public class impl {
     }
 
 
-//    @RequestMapping(value = "/socket/getOnlineDevice", method = RequestMethod.GET)
-//    public String getAllOnlineDevice(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-//        log.info("【TCPSERVER】getAllOnlineDevice Start");
-//        Map<String, String> result = new HashMap<>();
-//        String devicelist = "";
-//        String appSecret = servletRequest.getParameter("appSecret");
-//        try {
-//            if (Util.APP_SECRET.equals(appSecret)) {
-//                String localIp = servletRequest.getParameter("localIp");
-//                Map<String, String> onlineMap = KVStoreUtils.getAllField(Util.KV_PORT_KEY);
-//                for (String key : onlineMap.keySet()) {
-//                    if (onlineMap.get(key).contains(localIp)) {
-//                        if (StringUtil.isNotBlank(devicelist)) {
-//                            devicelist = devicelist + ";" + key;
-//                        } else {
-//                            devicelist = key;
-//                        }
-//                    }
-//                }
-//
-//                if (StringUtil.isNotBlank(devicelist)) {
-//                    result.put("result", devicelist);
-//                } else {
-//                    result.put("result", Util.VALUE_STRING_ZERO);
-//                }
-//
-//            } else {
-//                result.put("result", Util.VALUE_STRING_ZERO);
-//            }
-//        } catch (Exception e) {
-//            log.error(e.getMessage(), e);
-//        }
-//        log.info("【TCPSERVER】getAllOnlineDevice End");
-//        return JsonUtil.getJsonFromMap(result);
-//    }
+    @RequestMapping(value = "/socket/getOnlineDevice", method = RequestMethod.GET)
+    public String getAllOnlineDevice(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        log.info("【TCPSERVER】getAllOnlineDevice Start");
+        Map<String, String> result = new HashMap<>();
+        String devicelist = "";
+        String appSecret = servletRequest.getParameter("appSecret");
+        try {
+            if (Util.APP_SECRET.equals(appSecret)) {
+                String localIp = servletRequest.getParameter("localIp");
+                Map<String, String> onlineMap = KVStoreUtils.getAllField(Util.KV_PORT_KEY);
+                for (String key : onlineMap.keySet()) {
+                    if (onlineMap.get(key).contains(localIp)) {
+                        if (StringUtil.isNotBlank(devicelist)) {
+                            devicelist = devicelist + ";" + key;
+                        } else {
+                            devicelist = key;
+                        }
+                    }
+                }
+
+                if (StringUtil.isNotBlank(devicelist)) {
+                    result.put("result", devicelist);
+                } else {
+                    result.put("result", Util.VALUE_STRING_ZERO);
+                }
+
+            } else {
+                result.put("result", Util.VALUE_STRING_ZERO);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        log.info("【TCPSERVER】getAllOnlineDevice End");
+        return JsonUtil.getJsonFromMap(result);
+    }
 }
 

@@ -63,49 +63,49 @@ public class KVStoreUtils {
         try {
             Jedis jedis = pool.getResource();
             jedis.hset(key, field, value);
-            log.debug(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", key, field, value));
+            log.info(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", key, field, value));
             jedis.close();
         } catch (Exception e) {
             log.error(e.toString());
         }
     }
 
-    public static String getHashmapField(String field) {
-
-        String ret = "";
-        try {
-            Jedis jedis = pool.getResource();
-            ret = jedis.hget(key, field);
-            jedis.close();
-            log.debug(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", key, field, ret));
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-        return ret;
-
-    }
+//    public static String getHashmapField(String field) {
+//
+//        String ret = "";
+//        try {
+//            Jedis jedis = pool.getResource();
+//            ret = jedis.hget(key, field);
+//            jedis.close();
+//            log.info(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", key, field, ret));
+//        } catch (Exception e) {
+//            log.error(e.toString());
+//        }
+//        return ret;
+//
+//    }
 
     public static void putHashmapField(String kvKety, String field, String value) {
         try {
             Jedis jedis = pool.getResource();
             jedis.hset(kvKety, field, value);
-            log.debug(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", kvKety, field, value));
+            log.info(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", kvKety, field, value));
             jedis.close();
         } catch (Exception e) {
             log.error(e.toString());
         }
     }
 
-    public static void putHashmapField(String kvKety, Map<String, String> hash) {
-        try {
-            Jedis jedis = pool.getResource();
-            jedis.hmset(kvKety, hash);
-            log.debug(MessageFormat.format("set key[{0}]] to KVS", kvKety));
-            jedis.close();
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-    }
+//    public static void putHashmapField(String kvKety, Map<String, String> hash) {
+//        try {
+//            Jedis jedis = pool.getResource();
+//            jedis.hmset(kvKety, hash);
+//            log.info(MessageFormat.format("set key[{0}]] to KVS", kvKety));
+//            jedis.close();
+//        } catch (Exception e) {
+//            log.error(e.toString());
+//        }
+//    }
 
     public static String getHashmapField(String kvKety, String field) {
 
@@ -114,7 +114,7 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             ret = jedis.hget(kvKety, field);
             jedis.close();
-            log.debug(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", kvKety, field, ret));
+            log.info(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", kvKety, field, ret));
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -129,7 +129,7 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             retMap = jedis.hgetAll(kvKety);
             jedis.close();
-            log.debug(MessageFormat.format("get key[{0}]from KVS, value is [{1}]", kvKety, retMap.size()));
+            log.info(MessageFormat.format("get key[{0}]from KVS, value is [{1}]", kvKety, retMap.size()));
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -143,7 +143,7 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             ret = jedis.hdel(kvKety, field);
             jedis.close();
-            log.debug(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", kvKety, field));
+            log.info(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", kvKety, field));
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -156,49 +156,49 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             ret = jedis.hdel(key, field);
             jedis.close();
-            log.debug(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", key, field));
+            log.info(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", key, field));
         } catch (Exception e) {
             log.error(e.toString());
         }
         return ret;
     }
 
-    public static Long clearKey(String kvKety) {
-        Long ret = null;
-        try {
-            Jedis jedis = pool.getResource();
-            ret = jedis.del(kvKety);
-            jedis.close();
-            log.debug(MessageFormat.format("remove key [{0}] from KVS ", kvKety));
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-        return ret;
-    }
+//    public static Long clearKey(String kvKety) {
+//        Long ret = null;
+//        try {
+//            Jedis jedis = pool.getResource();
+//            ret = jedis.del(kvKety);
+//            jedis.close();
+//            log.info(MessageFormat.format("remove key [{0}] from KVS ", kvKety));
+//        } catch (Exception e) {
+//            log.error(e.toString());
+//        }
+//        return ret;
+//    }
+//
+//    public static Long clearKey() {
+//        Long ret = null;
+//        try {
+//            Jedis jedis = pool.getResource();
+//            ret = jedis.del(key);
+//            jedis.close();
+//            log.info(MessageFormat.format("remove key [{0}] from KVS ", key));
+//        } catch (Exception e) {
+//            log.error(e.toString());
+//        }
+//        return ret;
+//    }
 
-    public static Long clearKey() {
-        Long ret = null;
-        try {
-            Jedis jedis = pool.getResource();
-            ret = jedis.del(key);
-            jedis.close();
-            log.debug(MessageFormat.format("remove key [{0}] from KVS ", key));
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-        return ret;
-    }
-
-    private static String EncryptProperty(String propertyValue) {
-
-        byte[] asBytes = Base64.getDecoder().decode(propertyValue);
-        String decryptValue = "";
-        try {
-            decryptValue = new String(asBytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.error(e.toString());
-        }
-        return decryptValue;
-    }
+//    private static String EncryptProperty(String propertyValue) {
+//
+//        byte[] asBytes = Base64.getDecoder().decode(propertyValue);
+//        String decryptValue = "";
+//        try {
+//            decryptValue = new String(asBytes, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            log.error(e.toString());
+//        }
+//        return decryptValue;
+//    }
 
 }
