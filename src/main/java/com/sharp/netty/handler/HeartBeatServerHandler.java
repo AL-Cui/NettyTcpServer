@@ -281,7 +281,8 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
             // 添加节点 : cmd ,并添加内容
             root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE_BOXDELETE);
             logger.debug("发送信息：" + writeDoc.asXML());
-            session.write(writeDoc.asXML()+"\r\n");
+            ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML(), CharsetUtil.UTF_8));
+            session.writeAndFlush(replyString.duplicate());
 
         }
 

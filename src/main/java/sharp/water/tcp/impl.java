@@ -5,7 +5,12 @@ import com.sharp.netty.sessioncache.SessionCache;
 import com.sharp.netty.utils.AgentUtil;
 import com.sharp.netty.utils.Util;
 import com.sharp.netty.utils.WifiConfig;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.util.CharsetUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -41,9 +46,7 @@ public class impl {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
                 log.info(MessageFormat.format("[deviceControl] invoked, PARAM: macAddress[{0}]", macAddress));
-                //要换
                 SocketChannel session = SessionCache.getInstance().isExists(macAddress);
-//                SocketChannel session = SessionCache.getInstance().isExists(macAddress).getSocketChannel();
                 // 连接保持判断
                 if (session != null) {
                     try {
@@ -55,8 +58,10 @@ public class impl {
                         root.addElement(Util.NODE_MSG).setText(Util.MSG_VALUE_CTRLNOTIFY);
                         // 添加节点:cmd ,设置节点信息
                         root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE_CHECKCMD);
-                        log.info("发送信息：" + writeDoc.asXML());
-                        session.writeAndFlush(writeDoc.asXML()+"\r\n");
+                        log.info("控制发送信息：" + writeDoc.asXML());
+                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        session.writeAndFlush(replyString.duplicate());
+//                        session.writeAndFlush(writeDoc.asXML()+"\r\n");
                         // 正常状态
                         result.put("result", Util.VALUE_STRING_ONE);
                     } catch (Exception e) {
@@ -78,14 +83,6 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @GET
-    //    @Path("/isConnected")
-    //    @Produces({MediaType.APPLICATION_JSON})
     @RequestMapping(value = "/socket/isConnected", method = RequestMethod.GET)
     public String connected(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】connected Start");
@@ -113,24 +110,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    ;
-
-    //
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @POST
-    //    @Path("/boxIdCreate")
-    //    @Produces({MediaType.APPLICATION_JSON })
     @RequestMapping(value = "/socket/boxIdCreate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String boxIdCreate(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         log.info("【TCPSERVER】boxIdCreate Start");
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         String appSecret = servletRequest.getParameter("appSecret");
-        String tcpresult = "";
         try {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
@@ -149,7 +134,8 @@ public class impl {
                     // 添加节点:cmd,设置节点信息
                     root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE);
                     // 将document文档对象直接转换成字符串
-                    session.writeAndFlush(writeDoc.asXML()+"\r\n");
+                    ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                    session.writeAndFlush(replyString.duplicate());
                     result.put("result", Util.VALUE_STRING_ONE);
 //                        session.writeAndFlush(writeDoc.asXML()).addListener((ChannelFutureListener) future -> {
 //                            if (future.isSuccess()){
@@ -186,15 +172,6 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @POST
-    //    @Path("/boxIdDelete")
-    //    @Produces({MediaType.APPLICATION_JSON })
     @RequestMapping(value = "/socket/boxIdDelete", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String boxIdDelete(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】boxIdDelete Start");
@@ -204,9 +181,7 @@ public class impl {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
                 log.info(MessageFormat.format("[boxIdDelete] invoked, PARAM: macAddress[{0}]", macAddress));
-                //要换
                 SocketChannel session = SessionCache.getInstance().isExists(macAddress);
-//                SocketChannel session = SessionCache.getInstance().isExists(macAddress).getSocketChannel();
                 // 连接保持判断
                 if (session != null) {
                     try {
@@ -219,7 +194,8 @@ public class impl {
                         // 添加节点 : cmd ,并添加内容
                         root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE_BOXDELETE);
                         // log.info("发送信息：" + writeDoc.asXML());
-                        session.writeAndFlush(writeDoc.asXML()+"\r\n");
+                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        session.writeAndFlush(replyString.duplicate());
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
                         // 正常状态
@@ -243,14 +219,6 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @POST
-    //    @Path("/updateVersion")
-    //    @Produces({MediaType.APPLICATION_JSON})
     @RequestMapping(value = "/socket/updateVersion", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String updateVersion(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】updateVersion Start");
@@ -262,9 +230,7 @@ public class impl {
                 String autoFlg = servletRequest.getParameter("autoFlg");
                 log.info(MessageFormat.format("[updateVersion] invoked, PARAM: macAddress[{0}]", macAddress));
                 // 保存客户端的会话session
-                //要换
                 SocketChannel session = SessionCache.getInstance().isExists(macAddress);
-//                SocketChannel session = SessionCache.getInstance().isExists(macAddress).getSocketChannel();
                 if (session != null) {
                     String dateUrl = "";
                     String version = "";
@@ -312,7 +278,8 @@ public class impl {
                         // 添加节点:version_number
                         data.addElement(Util.NODE_VERSION).setText(version);
                         // 将document文档对象直接转换成字符串
-                        session.write(writeDoc.asXML()+"\r\n");
+                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        session.writeAndFlush(replyString.duplicate());
 
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
@@ -334,14 +301,6 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @GET
-    //    @Path("/isNeedUpdate")
-    //    @Produces({MediaType.APPLICATION_JSON})
     @RequestMapping(value = "/socket/isNeedUpdate", method = RequestMethod.GET)
     public String checkWifiVer(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】checkWifiVer Start");
@@ -415,9 +374,7 @@ public class impl {
                 String autoFlg = servletRequest.getParameter("autoFlg");
                 log.info(MessageFormat.format("[machverVersion] invoked, PARAM: macAddress[{0}]", macAddress));
                 // 保存客户端的会话session
-                //要换
                 SocketChannel session = SessionCache.getInstance().isExists(macAddress);
-//                SocketChannel session = SessionCache.getInstance().isExists(macAddress).getSocketChannel();
                 if (session != null) {
                     String dateUrl = "";
                     String version = "";
@@ -465,7 +422,8 @@ public class impl {
                         // 添加节点:version_number
                         data.addElement(Util.NODE_VERSION).setText(version);
                         // 将document文档对象直接转换成字符串
-                        session.write(writeDoc.asXML()+"\r\n");
+                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        session.writeAndFlush(replyString.duplicate());
 
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
@@ -487,15 +445,6 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @GET
-    //    @Path("/isMachverUpdate")
-    //    @Produces({MediaType.APPLICATION_JSON})
     @RequestMapping(value = "/socket/isMachverUpdate", method = RequestMethod.GET)
     public String isMachverUpdate(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
@@ -551,50 +500,41 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //
-    //
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @GET
-    //    @Path("/getOnlineDevice")
-    //    @Produces({MediaType.APPLICATION_JSON})
-    @RequestMapping(value = "/socket/getOnlineDevice", method = RequestMethod.GET)
-    public String getAllOnlineDevice(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        log.info("【TCPSERVER】getAllOnlineDevice Start");
-        Map<String, String> result = new HashMap<>();
-        String devicelist = "";
-        String appSecret = servletRequest.getParameter("appSecret");
-        try {
-            if (Util.APP_SECRET.equals(appSecret)) {
-                String localIp = servletRequest.getParameter("localIp");
-                Map<String, String> onlineMap = KVStoreUtils.getAllField(Util.KV_PORT_KEY);
-                for (String key : onlineMap.keySet()) {
-                    if (onlineMap.get(key).contains(localIp)) {
-                        if (StringUtil.isNotBlank(devicelist)) {
-                            devicelist = devicelist + ";" + key;
-                        } else {
-                            devicelist = key;
-                        }
-                    }
-                }
 
-                if (StringUtil.isNotBlank(devicelist)) {
-                    result.put("result", devicelist);
-                } else {
-                    result.put("result", Util.VALUE_STRING_ZERO);
-                }
-
-            } else {
-                result.put("result", Util.VALUE_STRING_ZERO);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        log.info("【TCPSERVER】getAllOnlineDevice End");
-        return JsonUtil.getJsonFromMap(result);
-    }
+//    @RequestMapping(value = "/socket/getOnlineDevice", method = RequestMethod.GET)
+//    public String getAllOnlineDevice(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+//        log.info("【TCPSERVER】getAllOnlineDevice Start");
+//        Map<String, String> result = new HashMap<>();
+//        String devicelist = "";
+//        String appSecret = servletRequest.getParameter("appSecret");
+//        try {
+//            if (Util.APP_SECRET.equals(appSecret)) {
+//                String localIp = servletRequest.getParameter("localIp");
+//                Map<String, String> onlineMap = KVStoreUtils.getAllField(Util.KV_PORT_KEY);
+//                for (String key : onlineMap.keySet()) {
+//                    if (onlineMap.get(key).contains(localIp)) {
+//                        if (StringUtil.isNotBlank(devicelist)) {
+//                            devicelist = devicelist + ";" + key;
+//                        } else {
+//                            devicelist = key;
+//                        }
+//                    }
+//                }
+//
+//                if (StringUtil.isNotBlank(devicelist)) {
+//                    result.put("result", devicelist);
+//                } else {
+//                    result.put("result", Util.VALUE_STRING_ZERO);
+//                }
+//
+//            } else {
+//                result.put("result", Util.VALUE_STRING_ZERO);
+//            }
+//        } catch (Exception e) {
+//            log.error(e.getMessage(), e);
+//        }
+//        log.info("【TCPSERVER】getAllOnlineDevice End");
+//        return JsonUtil.getJsonFromMap(result);
+//    }
 }
 

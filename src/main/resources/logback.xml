@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <property name="LOG_PATH" value="/MyData/tcpserver"/>
     <property name="LOCAL_LOG_PATH" value="/Users/cuiduo/Documents"/>
+    <property name="IOT_LOG_PATH" value="/home/iot/MyData/tcpserver"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</pattern>
@@ -14,30 +15,20 @@
 
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--<file>/Users/cuiduo/Documents/tcpServer.log</file>-->
-        <!--<file>/home/iot/MyData/tcpserver/tcpServer.log</file>-->
-
-        <!--<file>/MyData/tcpserver/slc_tcpserver.log</file>-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- daily rollover 保存历史记录到这个文件夹一日起为后缀 -->
-            <fileNamePattern>${LOG_PATH}/tcpServer.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!--<fileNamePattern>/MyData/tcpserver/slc_tcpserver.%d{yyyy-MM-dd}.log</fileNamePattern>-->
-            <!--<fileNamePattern>/home/iot/MyData/tcpserver/slc_tcpserver.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+            <!--<fileNamePattern>${LOG_PATH}/tcpServer.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <!--<fileNamePattern>${LOCAL_LOG_PATH}/slc_tcpserver.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <fileNamePattern>${IOT_LOG_PATH}/slc_tcpserver.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- keep 5 days' worth of history -->
             <maxHistory>5</maxHistory>
+            <maxFileSize>200MB</maxFileSize>
         </rollingPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
-            </pattern>
-        </layout>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>2000MB</maxFileSize>
-        </triggeringPolicy>
-        <!--<encoder>-->
-            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</pattern>-->
-            <!--<charset>UTF-8</charset> &lt;!&ndash; 此处设置字符集 &ndash;&gt;-->
-        <!--</encoder>-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+
+
     </appender>
 
 
@@ -45,29 +36,20 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <!--<file>/Users/cuiduo/Documents/tcpServer_ERROR.log</file>-->
-        <!--<file>/MyData/tcpserver/slc_tcpserver_ERROR.log</file>-->
-        <!--<file>/home/iot/MyData/tcpserver/slc_tcpserver_ERROR.log</file>-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- daily rollover 保存历史记录到这个文件夹一日起为后缀 -->
-            <fileNamePattern>${LOG_PATH}/tcpServer_ERROR.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!--<fileNamePattern>/MyData/tcpserver/slc_tcpserver_ERROR.%d{yyyy-MM-dd}.log</fileNamePattern>-->
-            <!--<fileNamePattern>/home/iot/MyData/tcpserver/slc_tcpserver_ERROR.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+            <!--<fileNamePattern>${LOG_PATH}/tcpServer_ERROR.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <!--<fileNamePattern>${LOCAL_LOG_PATH}/slc_tcpserver_ERROR.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <fileNamePattern>${IOT_LOG_PATH}/slc_tcpserver_ERROR.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- keep 5 days' worth of history -->
             <maxHistory>5</maxHistory>
+            <maxFileSize>20MB</maxFileSize>
         </rollingPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
-            </pattern>
-        </layout>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>2000MB</maxFileSize>
-        </triggeringPolicy>
-        <!--<encoder>-->
-            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</pattern>-->
-            <!--<charset>UTF-8</charset> &lt;!&ndash; 此处设置字符集 &ndash;&gt;-->
-        <!--</encoder>-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+
     </appender>
     <root level="INFO">
         <appender-ref ref="CONSOLE"></appender-ref>

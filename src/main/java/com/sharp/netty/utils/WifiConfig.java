@@ -1,36 +1,32 @@
 package com.sharp.netty.utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
  * @author QinMingrui
- * 
+ * <p>
  * 获取wifiupdate对应的配置工具类
- *
  */
 public class WifiConfig {
-	private final static Log log = LogFactory.getLog(WifiConfig.class);
+    private final static Logger log = LoggerFactory.getLogger(WifiConfig.class);
 
-	public static String getValue(String key) {
+    public static String getValue(String key) {
 
-		String result = "";
-		
-		// 获取最新的协议版本
-		Resource resource = new FileSystemResource("/wifiupdate.properties");
-		try {
-			Properties wifiProperties = PropertiesLoaderUtils.loadProperties(resource);
-			result = wifiProperties.getProperty(key);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
-		return result;
-	}
+        String result = "";
+
+        // 获取最新的协议版本
+        InputStream inputStream = WifiConfig.class.getResourceAsStream("/wifiupdate.properties");
+        Properties wifiProperties = new Properties();
+        try {
+            wifiProperties.load(inputStream);
+            result = wifiProperties.getProperty(key);
+        } catch (IOException e) {
+            log.error("读取版本资源文件" + e.getMessage());
+        }
+        return result;
+    }
 }
