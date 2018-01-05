@@ -1,9 +1,7 @@
 package com.sharp.netty.handler;
 
-import com.sharp.netty.common.DeviceBindInfo;
 import com.sharp.netty.common.DeviceInfo;
 import com.sharp.netty.common.StringUtil;
-import com.sharp.netty.common.WeChatUtil;
 import com.sharp.netty.sessioncache.SessionCache;
 import com.sharp.netty.utils.AgentUtil;
 import com.sharp.netty.utils.Util;
@@ -122,7 +120,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                     update.setText(update_flag);
                     // 将document文档对象直接转换成字符串
                     logger.info("发送内容: " + writeDoc.asXML());
-                    ByteBuf VALUE_UPDATE = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n",
+                    ByteBuf VALUE_UPDATE = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML() + "\r\n",
                             CharsetUtil.UTF_8));
                     ctx.writeAndFlush(VALUE_UPDATE.duplicate());
 //                    session.write(writeDoc.asXML());
@@ -159,7 +157,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                     update.setText(update_flag);
                     // 将document文档对象直接转换成字符串
                     logger.info("发送内容: " + writeDoc.asXML());
-                    ByteBuf VALUE_MACHVER = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                    ByteBuf VALUE_MACHVER = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML() + "\r\n", CharsetUtil.UTF_8));
                     ctx.writeAndFlush(VALUE_MACHVER.duplicate());
 //                    session.write(writeDoc.asXML());
 
@@ -193,15 +191,15 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
                 purifierUpdate(mac, machverVersion);
 
-                AgentUtil.getCityNameByIp(mac, ctx.channel().remoteAddress().toString().split(":")[0].substring(1));
-
-                 //判断是否存在boxID和绑定关系
-                if (Util.VALUE_STRING_ONE.equals(AgentUtil.checkBindingStatusByMac(mac))) {
-                    // 改变设备状态为连接状态
-                    changeStatus(mac, "1");
-                }
-
-                AgentUtil.smartSet(mac);
+//                AgentUtil.getCityNameByIp(mac, ctx.channel().remoteAddress().toString().split(":")[0].substring(1));
+//
+//                 //判断是否存在boxID和绑定关系
+//                if (Util.VALUE_STRING_ONE.equals(AgentUtil.checkBindingStatusByMac(mac))) {
+//                    // 改变设备状态为连接状态
+//                    changeStatus(mac, "1");
+//                }
+//
+//                AgentUtil.smartSet(mac);
             }
             // DocumentHelper提供了创建Document对象的方法
             Document writeDoc = DocumentHelper.createDocument();
@@ -223,7 +221,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
             server_time.setText(String.valueOf(System.currentTimeMillis()));
             // 将document文档对象直接转换成字符串
             logger.info("接受心跳后服务端发送的内容: " + writeDoc.asXML() + "  ToMac" + mac);
-            ByteBuf HEARTBEATRES = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+            ByteBuf HEARTBEATRES = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML() + "\r\n", CharsetUtil.UTF_8));
             ctx.channel().writeAndFlush(HEARTBEATRES.duplicate());
         }
 
@@ -243,28 +241,28 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    /**
-     * 改变微信状态
-     *
-     * @param mac
-     * @param status
-     */
-    private void changeStatus(String mac, String status) {
-
-        List<DeviceBindInfo> infos = AgentUtil.getDeviceBindInfoByMac(mac);
-        List<String> openIDs = new ArrayList<String>();
-        if (infos != null) {
-            for (DeviceBindInfo info : infos) {
-                if ("0".equals(info.getAdvanceBindFlg())) {
-                    openIDs.add(info.getOpenId());
-                }
-            }
-            if (openIDs.size() > 0) {
-                WeChatUtil.sendConnStatusToWeChat(openIDs, infos.get(0).getDeviceId(), status);
-            }
-        }
-
-    }
+//    /**
+//     * 改变微信状态
+//     *
+//     * @param mac
+//     * @param status
+//     */
+//    private void changeStatus(String mac, String status) {
+//
+//        List<DeviceBindInfo> infos = AgentUtil.getDeviceBindInfoByMac(mac);
+//        List<String> openIDs = new ArrayList<String>();
+//        if (infos != null) {
+//            for (DeviceBindInfo info : infos) {
+//                if ("0".equals(info.getAdvanceBindFlg())) {
+//                    openIDs.add(info.getOpenId());
+//                }
+//            }
+//            if (openIDs.size() > 0) {
+//                WeChatUtil.sendConnStatusToWeChat(openIDs, infos.get(0).getDeviceId(), status);
+//            }
+//        }
+//
+//    }
 
     private void boxIdDelete(String macAddress) {
 
@@ -294,7 +292,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
      * @param mac
      */
     private void wifiUpdate(String mac, String wifiVersion) {
-        logger.info("wifiUpdate Strat");
+        logger.info("wifiUpdate Strat-->"+wifiVersion);
 
         DeviceInfo deviceInfo = AgentUtil.getDeviceInfoByMac(mac);
         if (deviceInfo != null) {
@@ -304,13 +302,14 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                 if (!wifiVersion.equals(nowWifiVersion)) {
                     // 更新db中wifi的版本号
                     DeviceInfo deviceInfoInput = new DeviceInfo();
-                    deviceInfoInput.setDeviceId(deviceInfo.getDeviceId());
+                    deviceInfoInput.setMacAddress(deviceInfo.getMacAddress());   //带-
                     deviceInfoInput.setWifiVersion(wifiVersion);
-                    AgentUtil.updateDeviceInfo(deviceInfoInput);
+                    AgentUtil.updateDeviceInfo(deviceInfoInput,"wifi");
                 }
-
+//替换Agent那边的接口
                 if (StringUtil.isCompareTo(newWifiVersion, wifiVersion)) {
-                    WeChatUtil.sendUpdateNotifyToWeChat(mac, newWifiVersion, "wifi");
+                    AgentUtil.sendUpdateMessage(mac,newWifiVersion,"wifi");
+//                    WeChatUtil.sendUpdateNotifyToWeChat(mac, newWifiVersion, "wifi");
                 }
 
             } else {
@@ -318,16 +317,19 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                     String defaultVersion = WifiConfig.getValue(deviceInfo.getDeviceKind() + "_default_wifimoudle_ver");
                     // 更新db中wifi的版本号
                     DeviceInfo deviceInfoInput = new DeviceInfo();
-                    deviceInfoInput.setDeviceId(deviceInfo.getDeviceId());
+                    deviceInfoInput.setMacAddress(deviceInfo.getMacAddress());
                     deviceInfoInput.setWifiVersion(defaultVersion);
-                    AgentUtil.updateDeviceInfo(deviceInfoInput);
-
+                    AgentUtil.updateDeviceInfo(deviceInfoInput,"wifi");
+//替换Agent那边的接口
                     if (!newWifiVersion.equals(defaultVersion)) {
-                        WeChatUtil.sendUpdateNotifyToWeChat(mac, newWifiVersion, "wifi");
+                        AgentUtil.sendUpdateMessage(mac,newWifiVersion,"wifi");
+//                        WeChatUtil.sendUpdateNotifyToWeChat(mac, newWifiVersion, "wifi");
                     }
                 } else {
+                    //替换Agent那边的接口
                     if (StringUtil.isCompareTo(newWifiVersion, nowWifiVersion)) {
-                        WeChatUtil.sendUpdateNotifyToWeChat(mac, newWifiVersion, "wifi");
+                        AgentUtil.sendUpdateMessage(mac,newWifiVersion,"wifi");
+//                        WeChatUtil.sendUpdateNotifyToWeChat(mac, newWifiVersion, "wifi");
                     }
                 }
             }
@@ -352,13 +354,14 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                 if (!purifierVersion.equals(nowVersion)) {
                     // 更新db中wifi的版本号
                     DeviceInfo deviceInfoInput = new DeviceInfo();
-                    deviceInfoInput.setDeviceId(deviceInfo.getDeviceId());
+                    deviceInfoInput.setMacAddress(deviceInfo.getMacAddress());
                     deviceInfoInput.setPurifierVersion(purifierVersion);
-                    AgentUtil.updateDeviceInfo(deviceInfoInput);
+                    AgentUtil.updateDeviceInfo(deviceInfoInput,"machine");
                 }
-
+//替换Agent那边的接口
                 if (StringUtil.isCompareTo(newVersion, purifierVersion)) {
-                    WeChatUtil.sendUpdateNotifyToWeChat(mac, newVersion, "purifier");
+                    AgentUtil.sendUpdateMessage(mac,newVersion,"machine");
+//                    WeChatUtil.sendUpdateNotifyToWeChat(mac, newVersion, "purifier");
                 }
 
             } else {
@@ -366,17 +369,20 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                     String defaultVersion = WifiConfig.getValue(deviceInfo.getDeviceKind() + "_default_purifier_ver");
                     // 更新db中wifi的版本号
                     DeviceInfo deviceInfoInput = new DeviceInfo();
-                    deviceInfoInput.setDeviceId(deviceInfo.getDeviceId());
+                    deviceInfoInput.setMacAddress(deviceInfo.getMacAddress());
                     deviceInfoInput.setPurifierVersion(defaultVersion);
-                    AgentUtil.updateDeviceInfo(deviceInfoInput);
-
+                    AgentUtil.updateDeviceInfo(deviceInfoInput,"machine");
+//替换Agent那边的接口
                     if (!newVersion.equals(defaultVersion)) {
-                        WeChatUtil.sendUpdateNotifyToWeChat(mac, newVersion, "purifier");
+                        AgentUtil.sendUpdateMessage(mac,newVersion,"machine");
+//                        WeChatUtil.sendUpdateNotifyToWeChat(mac, newVersion, "purifier");
                     }
                 } else {
                     if (StringUtil.isNotBlank(newVersion) && StringUtil.isNotBlank(nowVersion)) {
+                        //替换Agent那边的接口
                         if (StringUtil.isCompareToUpdateVerson(newVersion, nowVersion)) {
-                            WeChatUtil.sendUpdateNotifyToWeChat(mac, newVersion, "purifier");
+                            AgentUtil.sendUpdateMessage(mac,newVersion,"machine");
+//                            WeChatUtil.sendUpdateNotifyToWeChat(mac, newVersion, "purifier");
                         }
                     }
                 }

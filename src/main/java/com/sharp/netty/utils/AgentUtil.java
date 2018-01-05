@@ -1,179 +1,217 @@
 package com.sharp.netty.utils;
 
 import com.sharp.netty.common.*;
+import net.minidev.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * @author QinMingrui
- * 
- *         访问agent接口工具
- *
+ * <p>
+ * 访问agent接口工具
  */
 public class AgentUtil {
-	private static final String AGENT_SERVER_URL = "http://localhost:18080/SharpCloudAgent/agent";
+    //	private static final String AGENT_SERVER_URL = "http://localhost:18080/SharpCloudAgent/agent";
+    private static final String AGENT_SERVER_URL = "iotwater-rd.smart-blink.com/SharpCloudAgent";
 
-	/**
-	 * @param mac
-	 * @return
-	 */
-	public static String checkBindingStatusByMac(String mac) {
-		String ret = "";
-		String url = AGENT_SERVER_URL + "/checkBindingStatusByMac?";
-		url += HttpUtils.addUrlParamPair("mac", mac);
-		url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+    /**
+     * @param mac
+     * @return
+     */
+    public static String checkBindingStatusByMac(String mac) {
+        String ret = "";
+        String url = AGENT_SERVER_URL + "/checkBindingStatusByMac?";
+        url += HttpUtils.addUrlParamPair("mac", mac);
+        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
 
-		ret = HttpUtils.sendHttpGetRequest(url);
+        ret = HttpUtils.sendHttpGetRequest(url);
 
-		return ret;
-	}
-	
-	/**
-	 * @param mac
-	 * @return
-	 */
-	public static String smartSet(String mac) {
-		String ret = "";
-		String url = AGENT_SERVER_URL + "/smartSet?";
-		url += HttpUtils.addUrlParamPair("mac", mac);
-		url += HttpUtils.addUrlParamPair("openId", "");
-		url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+        return ret;
+    }
 
-		ret = HttpUtils.sendHttpGetRequest(url);
+    /**
+     * @param mac
+     * @return
+     */
+    public static String smartSet(String mac) {
+        String ret = "";
+        String url = AGENT_SERVER_URL + "/smartSet?";
+        url += HttpUtils.addUrlParamPair("mac", mac);
+        url += HttpUtils.addUrlParamPair("openId", "");
+        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
 
-		return ret;
-	}
+        ret = HttpUtils.sendHttpGetRequest(url);
 
-	/**
-	 * @param mac
-	 * @return
-	 */
-	public static String getCityNameByIp(String mac, String ip) {
-		String ret = "";
-		String url = AGENT_SERVER_URL + "/getCityNameByIp?";
-		url += HttpUtils.addUrlParamPair("macAddress", mac);
-		url += HttpUtils.addUrlParamPair("ip", ip);
-		url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+        return ret;
+    }
 
-		ret = HttpUtils.sendHttpGetRequest(url);
+    /**
+     * @param mac
+     * @return
+     */
+    public static String getCityNameByIp(String mac, String ip) {
+        String ret = "";
+        String url = AGENT_SERVER_URL + "/getCityNameByIp?";
+        url += HttpUtils.addUrlParamPair("macAddress", mac);
+        url += HttpUtils.addUrlParamPair("ip", ip);
+        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
 
-		return ret;
-	}
+        ret = HttpUtils.sendHttpGetRequest(url);
 
-	/**
-	 * @param mac
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<DeviceBindInfo> getDeviceBindInfoByMac(String mac) {
-		List<DeviceBindInfo> deviceBindInfoList = new ArrayList<DeviceBindInfo>();
+        return ret;
+    }
 
-		String url = AGENT_SERVER_URL + "/deviceBind/list/mac?";
-		url += HttpUtils.addUrlParamPair("mac", mac);
-		url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+    /**
+     * @param mac
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static List<DeviceBindInfo> getDeviceBindInfoByMac(String mac) {
+        List<DeviceBindInfo> deviceBindInfoList = new ArrayList<DeviceBindInfo>();
 
-		List<Object> listObjcet = JsonUtil.getJsonListFromString(HttpUtils.sendHttpGetRequest(url),
-				DeviceBindInfo.class);
-		for (Object objcet : listObjcet) {
-			deviceBindInfoList.add((DeviceBindInfo) objcet);
-		}
-		return deviceBindInfoList;
-	}
+        String url = AGENT_SERVER_URL + "/deviceBind/list/mac?";
+        url += HttpUtils.addUrlParamPair("mac", mac);
+        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
 
-	/**
-	 * @param mac
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<DeviceBindInfo> getDeviceBindInfoListByMac(String mac) {
-		List<DeviceBindInfo> deviceBindInfoList = new ArrayList<DeviceBindInfo>();
+        List<Object> listObjcet = JsonUtil.getJsonListFromString(HttpUtils.sendHttpGetRequest(url),
+                DeviceBindInfo.class);
+        for (Object objcet : listObjcet) {
+            deviceBindInfoList.add((DeviceBindInfo) objcet);
+        }
+        return deviceBindInfoList;
+    }
 
-		String url = AGENT_SERVER_URL + "/deviceBind/mac/list?";
-		url += HttpUtils.addUrlParamPair("mac", mac);
-		url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+    /**
+     * @param mac
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static List<DeviceBindInfo> getDeviceBindInfoListByMac(String mac) {
+        List<DeviceBindInfo> deviceBindInfoList = new ArrayList<DeviceBindInfo>();
 
-		List<Object> listObjcet = JsonUtil.getJsonListFromString(HttpUtils.sendHttpGetRequest(url),
-				DeviceBindInfo.class);
-		for (Object objcet : listObjcet) {
-			deviceBindInfoList.add((DeviceBindInfo) objcet);
-		}
-		return deviceBindInfoList;
-	}
+        String url = AGENT_SERVER_URL + "/deviceBind/mac/list?";
+        url += HttpUtils.addUrlParamPair("mac", mac);
+        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
 
-	/**
-	 * @param mac
-	 * @return
-	 */
-	public static String unbindAllUser(String mac) {
-		String result = "";
+        List<Object> listObjcet = JsonUtil.getJsonListFromString(HttpUtils.sendHttpGetRequest(url),
+                DeviceBindInfo.class);
+        for (Object objcet : listObjcet) {
+            deviceBindInfoList.add((DeviceBindInfo) objcet);
+        }
+        return deviceBindInfoList;
+    }
 
-		String url = AGENT_SERVER_URL + "/user/unbindAllUser?";
-		url += HttpUtils.addUrlParamPair("mac", mac);
-		url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+    /**
+     * @param mac
+     * @return
+     */
+    public static String unbindAllUser(String mac) {
+        String result = "";
 
-		result = HttpUtils.sendHttpPostRequest(url, "{}");
+        String url = AGENT_SERVER_URL + "/user/unbindAllUser?";
+        url += HttpUtils.addUrlParamPair("mac", mac);
+        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
 
-		return result;
-	}
+        result = HttpUtils.sendHttpPostRequest(url, "{}");
 
-	/**
-	 * @param mac
-	 * @return
-	 */
-	public static DeviceInfo getDeviceInfoByMac(String mac) {
-		DeviceInfo deviceInfo = null;
-		String url = AGENT_SERVER_URL + "/mac/device?mac=" + mac + "&appSecret=" + Util.APP_SECRET;
-		String result = HttpUtils.sendHttpGetRequest(url);
-		if (StringUtil.isNotBlank(result)) {
-			deviceInfo = (DeviceInfo) JsonUtil.getBeanFromJson(result, DeviceInfo.class);
-		}
-		return deviceInfo;
-	}
+        return result;
+    }
 
-	/**
-	 * @param openId
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<DeviceBindInfo> getDeviceBindInfoByOpenId(String openId) {
-		List<DeviceBindInfo> deviceBindInfoList = new ArrayList<DeviceBindInfo>();
-		String url = AGENT_SERVER_URL + "/deviceBind/list/openId?openId=" + openId + "&appSecret="
-				+ Util.APP_SECRET;
-		String result = HttpUtils.sendHttpGetRequest(url);
-		if (StringUtil.isNotBlank(result)) {
-			List<Object> listObjcet = JsonUtil.getJsonListFromString(result, DeviceBindInfo.class);
-			for (Object objcet : listObjcet) {
-				deviceBindInfoList.add((DeviceBindInfo) objcet);
-			}
-		}
-		return deviceBindInfoList;
-	}
+    /**
+     * @param mac
+     * @return
+     */
+    public static DeviceInfo getDeviceInfoByMac(String mac) {
+        DeviceInfo deviceInfo = null;
+        String url = AGENT_SERVER_URL + "/mac/getDeviceInfo" + "?appSecret=" + Util.APP_SECRET;
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("mac", mac);
+        String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
+        String result = HttpUtils.sendHttpPostRequest(url, bodyString);
+        if (StringUtil.isNotBlank(result)) {
+            deviceInfo = (DeviceInfo) JsonUtil.getBeanFromJson(result, DeviceInfo.class);
+        }
+        return deviceInfo;
+    }
 
-	/**
-	 * @param deviceId
-	 * @return
-	 */
-	public static DeviceInfo getDeviceInfo(String deviceId) {
-		DeviceInfo deviceInfo = null;
-		String url = AGENT_SERVER_URL + "/device?deviceId=" + deviceId + "&appSecret=" + Util.APP_SECRET;
-		String result = HttpUtils.sendHttpGetRequest(url);
-		if (StringUtil.isNotBlank(result)) {
-			deviceInfo = (DeviceInfo) JsonUtil.getBeanFromJson(result, DeviceInfo.class);
-		}
-		return deviceInfo;
-	}
+    /**
+     * @param openId
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static List<DeviceBindInfo> getDeviceBindInfoByOpenId(String openId) {
+        List<DeviceBindInfo> deviceBindInfoList = new ArrayList<DeviceBindInfo>();
+        String url = AGENT_SERVER_URL + "/deviceBind/list/openId?openId=" + openId + "&appSecret="
+                + Util.APP_SECRET;
+        String result = HttpUtils.sendHttpGetRequest(url);
+        if (StringUtil.isNotBlank(result)) {
+            List<Object> listObjcet = JsonUtil.getJsonListFromString(result, DeviceBindInfo.class);
+            for (Object objcet : listObjcet) {
+                deviceBindInfoList.add((DeviceBindInfo) objcet);
+            }
+        }
+        return deviceBindInfoList;
+    }
 
-	/**
-	 * @param "deviceInfo
-	 * @return
-	 */
-	public static String updateDeviceInfo(DeviceInfo deviceInfoInput) {
-		String updateDeviceInfoFlg = "";
-		String url = AGENT_SERVER_URL + "/device?appSecret=" + Util.APP_SECRET;
-		String inputJsonString = JsonUtil.getJsonFromBean(deviceInfoInput);
-		updateDeviceInfoFlg = HttpUtils.sendHttpPutRequest(url, inputJsonString);
-		return updateDeviceInfoFlg;
-	}
+    /**
+     * @param deviceId
+     * @return
+     */
+    public static DeviceInfo getDeviceInfo(String deviceId) {
+        DeviceInfo deviceInfo = null;
+        String url = AGENT_SERVER_URL + "/device?deviceId=" + deviceId + "&appSecret=" + Util.APP_SECRET;
+        String result = HttpUtils.sendHttpGetRequest(url);
+        if (StringUtil.isNotBlank(result)) {
+            deviceInfo = (DeviceInfo) JsonUtil.getBeanFromJson(result, DeviceInfo.class);
+        }
+        return deviceInfo;
+    }
+
+    /**
+     * @param "deviceInfo
+     * @return
+     */
+    public static String updateDeviceInfo(DeviceInfo deviceInfoInput,String kind) {
+        String updateDeviceInfoFlg;
+        String url = AGENT_SERVER_URL + "/mac/updateDeviceVersion?appSecret=" + Util.APP_SECRET;
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("mac", deviceInfoInput.getMacAddress());
+        jsonMap.put("kind", kind);
+        jsonMap.put("newVersion", deviceInfoInput.getWifiVersion());
+
+        String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
+
+        updateDeviceInfoFlg = HttpUtils.sendHttpPostRequest(url, bodyString);
+
+        return updateDeviceInfoFlg;
+    }
+
+    public static void sendUpdateMessage(String mac, String newWifiVersion, String wifi) {
+        String userOpenId = AgentUtil.getDeviceBindMasterByMac(mac);
+        String url = AGENT_SERVER_URL + "/mac/sendUpdateMessage?appSecret=" + Util.APP_SECRET;
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("mac", mac);
+        jsonMap.put("userOpenId", userOpenId);
+        jsonMap.put("kind", wifi);
+        jsonMap.put("newVersion",newWifiVersion);
+
+        String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
+        HttpUtils.sendHttpPostRequest(url,bodyString);
+
+    }
+
+    private static String getDeviceBindMasterByMac(String mac) {
+        String url = AGENT_SERVER_URL + "/mac/getDeviceMaster?appSecret=" + Util.APP_SECRET;
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("mac", mac);
+        String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
+        String result = HttpUtils.sendHttpPostRequest(url, bodyString);
+        DeviceBindMaster resultObject = (DeviceBindMaster) JsonUtil.getBeanFromJson(result,DeviceBindMaster.class);
+        String userOpenId = resultObject.getData();
+        return userOpenId;
+    }
 }

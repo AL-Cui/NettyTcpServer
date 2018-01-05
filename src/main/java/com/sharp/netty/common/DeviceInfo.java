@@ -19,9 +19,9 @@ public class DeviceInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = -7050565178325326535L;
 
-	private String deviceId;
+	private String deviceId;   //不带-
 	private String deviceName;
-	private String macAddress;
+	private String macAddress; //带-
 	private String workState;
 	private String workMode;
 	private String timerState;

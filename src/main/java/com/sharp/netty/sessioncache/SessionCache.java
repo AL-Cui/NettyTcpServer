@@ -66,6 +66,7 @@ public class SessionCache {
         log.info("Map里现存的session数量=" + sessions.size());
         String clientIp = channel.remoteAddress().toString();
         KVStoreUtils.putHashmapField(mac, value);
+
         String kvIp = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
         log.info("Redis里目前存的IP="+kvIp);
         KVStoreUtils.putHashmapField(Util.KV_PORT_KEY, mac, clientIp);   //此处只存储唯一的ipport
