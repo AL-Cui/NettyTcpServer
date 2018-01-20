@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author QinMingrui
- * <p>
+ * @author Duo.Cui
+ *
  * Session操作类
  */
 public class SessionCache {
@@ -30,7 +30,6 @@ public class SessionCache {
      * 获取唯一实例
      */
     public static SessionCache getInstance() {
-        log.debug(" <<< Session单例获取 <<< ");
         if (session == null) {
             session = new SessionCache();
         }
@@ -71,15 +70,6 @@ public class SessionCache {
         log.info("Redis里目前存的IP="+kvIp);
         KVStoreUtils.putHashmapField(Util.KV_PORT_KEY, mac, clientIp);   //此处只存储唯一的ipport
 
-//		String kvIp = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
-//		if (StringUtil.isNotBlank(kvIp)) {
-//			if (!kvIp.contains(clientIp)) {
-//				String ipvalue = kvIp + ";" + clientIp;
-//				KVStoreUtils.putHashmapField(Util.KV_PORT_KEY, mac, ipvalue);
-//			}
-//		} else {
-//			KVStoreUtils.putHashmapField(Util.KV_PORT_KEY, mac, clientIp);
-//		}
     }
 
     /**
@@ -110,12 +100,5 @@ public class SessionCache {
             KVStoreUtils.removeHahmapField(mac);
             KVStoreUtils.removeHahmapField(Util.KV_PORT_KEY, mac);
         }
-//        if (clientIp.equals(ipvalue)) {
-//            KVStoreUtils.removeHahmapField(mac);
-//            KVStoreUtils.removeHahmapField(Util.KV_PORT_KEY, mac);
-//        } else {
-//            String ipvalueTemp = ipvalue.replaceAll(clientIp + ";", "");
-//            KVStoreUtils.putHashmapField(Util.KV_PORT_KEY, mac, ipvalueTemp);
-//        }
     }
 }

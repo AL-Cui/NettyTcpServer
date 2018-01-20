@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 /**
  * 发送HTTP请求的工具类
  * 
- * @author Pactera
+ * @author Duo.Cui
  *
  */
 public class HttpUtils {

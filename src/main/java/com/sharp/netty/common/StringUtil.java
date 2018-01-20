@@ -3,7 +3,7 @@ package com.sharp.netty.common;
 /**
  * 字符串工具
  * 
- * @author Pactera
+ * @author Duo.Cui
  *
  */
 public class StringUtil {

@@ -2,6 +2,10 @@ package com.sharp.netty.common;
 
 import java.io.Serializable;
 
+/***
+ * @author Duo.Cui
+ * 主用户信息数据类
+ */
 public class DeviceBindMaster implements Serializable {
     private static final long serialVersionUID = -7050565178325326535L;
 

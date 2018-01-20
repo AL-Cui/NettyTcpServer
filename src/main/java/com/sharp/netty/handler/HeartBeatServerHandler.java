@@ -20,7 +20,6 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
@@ -30,9 +29,8 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        logger.info(simpleDateFormat.format(new Date()) + ctx.channel().remoteAddress() + "->server:" + msg.toString());
+        logger.info("->server:" + msg.toString());
         readXML(msg.toString(), ctx);
     }
 
@@ -48,7 +46,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sessionClosed(ChannelHandlerContext ctx) throws Exception {
-        // 关闭通知
+        // 连接关闭
         if (ctx.attr(MACADDRESS).get() != null) {
             String mac = ctx.attr(MACADDRESS).get().toString();
             firstHeartBeatMap.remove(mac);
@@ -57,6 +55,12 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+    /***
+     * 解析收到的数据
+     * @param contents
+     * @param ctx
+     * @throws DocumentException
+     */
     private void readXML(String contents, ChannelHandlerContext ctx) throws DocumentException {
 
         Document readDoc = DocumentHelper.parseText(contents);
@@ -65,7 +69,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
         // 匹配节点：tcp_msg
         if (Util.NODE_TCP_MSG.equals(rootNode.getName())) {
             // 匹配节点（msg）内容
-            if (Util.MSG_VALUE_HEARTBEAT.equals(rootNode.elementTextTrim(Util.NODE_MSG))) {
+            if (Util.MSG_VALUE_HEARTBEAT.equals(rootNode.elementTextTrim(Util.NODE_MSG))) {   //收到机器端心跳包数据
                 // mac address
                 Element node = rootNode.element(Util.NODE_DATA);
                 mac = node.elementTextTrim(Util.NODE_MAC_ADDRESS);
@@ -77,7 +81,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                 createXML(mac, ctx, wifiVersion, machverVersion);
 
             } else if (Util.MSG_VALUE_NOTIFY.equals(rootNode.elementTextTrim(Util.NODE_MSG))) {
-                if (Util.MSG_VALUE_LINKRESET.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {
+                if (Util.MSG_VALUE_LINKRESET.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {    //收到从机器端解绑
                     // mac address
                     Iterator<Element> iterator = rootNode.elementIterator(Util.NODE_DATA);
                     while (iterator.hasNext()) {
@@ -92,7 +96,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
                             boxIdDelete(mac);
                         }
                     }
-                } else if (Util.MSG_VALUE_UPDATE.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {
+                } else if (Util.MSG_VALUE_UPDATE.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {     //收到机器发送更新的WIFI版本号，并回复
                     // data
                     Element node = rootNode.element(Util.NODE_DATA);
                     mac = node.elementTextTrim(Util.NODE_MAC_ADDRESS);
@@ -127,7 +131,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
                     // 通知用户更新结果信息
 //                    WeChatUtil.sendUpdateInfoToWeChat(mac, update_flag, version, "wifi");
-                } else if (Util.MSG_VALUE_MACHVER.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {
+                } else if (Util.MSG_VALUE_MACHVER.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {     //收到机器发送更新的主板版本号，并回复
                     // data
                     Element node = rootNode.element(Util.NODE_DATA);
                     mac = node.elementTextTrim(Util.NODE_MAC_ADDRESS);
@@ -171,6 +175,13 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 
+    /***
+     * 编辑回复给WIFI的心跳包，并做SessionCache的更新和版本判断
+     * @param mac
+     * @param ctx
+     * @param wifiVersion
+     * @param machverVersion
+     */
     private void createXML(String mac, ChannelHandlerContext ctx, String wifiVersion, String machverVersion) {
 
         logger.info("当前处理Mac地址 : " + mac);
@@ -228,7 +239,10 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-
+    /***
+     * 发送解绑指令给WIFI模组
+     * @param macAddress
+     */
     private void boxIdDelete(String macAddress) {
 
         SocketChannel session = SessionCache.getInstance().isExists(macAddress);
@@ -254,7 +268,8 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
     /**
      * wifi版本升级处理
      * wifiVersion--->WIFI通过心跳传上来的wifiversion
-     * newWifiVersion--->通过
+     * newWifiVersion--->通过Agent获取的数据库中的wifiVersion
+     * nowWifiVersion--->通过配置文件获取的wifiVersion
      * @param mac
      */
     private void wifiUpdate(String mac, String wifiVersion) {
@@ -302,8 +317,8 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * purifer版本升级处理
-     *
+     * 主板版本升级处理
+     * 主要版本相关变量同上
      * @param mac
      */
     private void purifierUpdate(String mac, String purifierVersion) {
@@ -352,13 +367,13 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
         logger.info("purifierUpdate End");
     }
 
-    /**
-     * 检查对面地址是否在黑名单中
-     *
-     * @param "session
-     *            连接session
-     * @return 是：true，否：false
-     */
+//    /**
+//     * 检查对面地址是否在黑名单中
+//     *
+//     * @param "session
+//     *            连接session
+//     * @return 是：true，否：false
+//     */
 //    private boolean checkIsBlocked(ChannelHandlerContext ctx) {
 //        boolean ret = false;
 //        String[] blockList = { "100.97" };

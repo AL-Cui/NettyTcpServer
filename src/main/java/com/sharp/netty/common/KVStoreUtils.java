@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author QinMingrui
- * <p>
+ * @author Duo.Cui
+ *
  * KVStore操作的工具类
  */
 @SpringBootApplication
@@ -70,21 +70,6 @@ public class KVStoreUtils {
         }
     }
 
-//    public static String getHashmapField(String field) {
-//
-//        String ret = "";
-//        try {
-//            Jedis jedis = pool.getResource();
-//            ret = jedis.hget(key, field);
-//            jedis.close();
-//            log.info(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", key, field, ret));
-//        } catch (Exception e) {
-//            log.error(e.toString());
-//        }
-//        return ret;
-//
-//    }
-
     public static void putHashmapField(String kvKety, String field, String value) {
         try {
             Jedis jedis = pool.getResource();
@@ -96,16 +81,6 @@ public class KVStoreUtils {
         }
     }
 
-//    public static void putHashmapField(String kvKety, Map<String, String> hash) {
-//        try {
-//            Jedis jedis = pool.getResource();
-//            jedis.hmset(kvKety, hash);
-//            log.info(MessageFormat.format("set key[{0}]] to KVS", kvKety));
-//            jedis.close();
-//        } catch (Exception e) {
-//            log.error(e.toString());
-//        }
-//    }
 
     public static String getHashmapField(String kvKety, String field) {
 

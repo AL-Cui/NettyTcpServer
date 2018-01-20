@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * DeviceInfo表对应的entity
  * 
- * @author QinMingrui
+ * @author Duo.Cui
  *
  */
 @JsonIgnoreProperties(ignoreUnknown=true)

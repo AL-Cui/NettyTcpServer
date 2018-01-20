@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * DeviceBindInfo表对应的entity
  * 
- * @author QinMingrui
+ * @author Duo.Cui
  *
  */
 public class DeviceBindInfo implements Serializable{

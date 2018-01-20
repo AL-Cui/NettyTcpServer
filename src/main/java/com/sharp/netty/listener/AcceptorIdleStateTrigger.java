@@ -8,6 +8,10 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/***
+ * @author Duo.Cui
+ * 用于监听Channel的类
+ */
 @ChannelHandler.Sharable
 public class AcceptorIdleStateTrigger extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(AcceptorIdleStateTrigger.class);

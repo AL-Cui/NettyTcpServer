@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * @author QinMingrui
- * <p>
+ * @author Duo.Cui
+ *
  * 获取wifiupdate对应的配置工具类
  */
 public class WifiConfig {

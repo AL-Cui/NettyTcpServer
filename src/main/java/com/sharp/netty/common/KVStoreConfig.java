@@ -12,7 +12,7 @@ import java.util.Properties;
 /**
  * 读取配置
  *
- * @author Pactera
+ * @author Duo.Cui
  */
 public class KVStoreConfig {
 

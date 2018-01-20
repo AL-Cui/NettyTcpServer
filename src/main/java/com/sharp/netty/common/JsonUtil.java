@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * 解析JSON格式数据
  * 
- * @author Pactera
+ * @author Duo.Cui
  *
  */
 public class JsonUtil {

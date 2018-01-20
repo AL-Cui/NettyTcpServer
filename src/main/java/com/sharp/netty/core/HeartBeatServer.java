@@ -35,14 +35,15 @@ import java.net.InetSocketAddress;
 import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 
+/***
+ * @author Duo.Cui
+ * 服务端启动类
+ */
 public class HeartBeatServer {
     private final AcceptorIdleStateTrigger idleStateTrigger = new AcceptorIdleStateTrigger();
     private int port = 2001;
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatServer.class);
 
-//    public HeartBeatServer(int port) {
-//        this.port = port;
-//    }
 
     static double coefficient = 0.8;
     static int numberOfCores = Runtime.getRuntime().availableProcessors();
@@ -50,6 +51,9 @@ public class HeartBeatServer {
 
     static final EventExecutorGroup eventExecutorGroup = new DefaultEventExecutorGroup(poolSize);
 
+    /***
+     *
+     */
     public void start() {
 
         String osName = System.getProperty("os.name");

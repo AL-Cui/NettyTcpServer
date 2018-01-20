@@ -10,8 +10,8 @@ import java.util.Map;
 
 
 /**
- * @author QinMingrui
- * <p>
+ * @author Duo.Cui
+ *
  * 访问agent接口工具
  */
 public class AgentUtil {
@@ -106,6 +106,7 @@ public class AgentUtil {
     }
 
     /**
+     * 解绑所有用户
      * @param mac
      * @return
      */
@@ -122,6 +123,7 @@ public class AgentUtil {
     }
 
     /**
+     * 通过Mac地址获取设备信息
      * @param mac
      * @return
      */
@@ -139,6 +141,7 @@ public class AgentUtil {
     }
 
     /**
+     * 通过OpenId获取设备的绑定信息
      * @param openId
      * @return
      */
@@ -158,6 +161,7 @@ public class AgentUtil {
     }
 
     /**
+     * 通过deviceId获取设备信息
      * @param deviceId
      * @return
      */
@@ -172,6 +176,8 @@ public class AgentUtil {
     }
 
     /**
+     * 更新Agent那边存储的设备信息（主要是版本信息）
+     * unchecked
      * @param "deviceInfo
      * @return
      */
@@ -190,6 +196,13 @@ public class AgentUtil {
         return updateDeviceInfoFlg;
     }
 
+    /***
+     * 发送版本更新的通知给Agent
+     * unchecked
+     * @param mac
+     * @param newWifiVersion
+     * @param wifi
+     */
     public static void sendUpdateMessage(String mac, String newWifiVersion, String wifi) {
         String userOpenId = AgentUtil.getDeviceBindMasterByMac(mac);
         String url = AGENT_SERVER_URL + "/mac/sendUpdateMessage?appSecret=" + Util.APP_SECRET;
@@ -204,6 +217,11 @@ public class AgentUtil {
 
     }
 
+    /***
+     * 通过Mac地址获取设备的主用户信息
+     * @param mac
+     * @return userOpenId
+     */
     private static String getDeviceBindMasterByMac(String mac) {
         String url = AGENT_SERVER_URL + "/mac/getDeviceMaster?appSecret=" + Util.APP_SECRET;
         Map<String, Object> jsonMap = new HashMap<>();

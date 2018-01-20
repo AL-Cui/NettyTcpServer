@@ -27,15 +27,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/***
+ * @author Duo.Cui
+ * 供Agent调用的接口
+ */
 @RestController
 public class impl {
     private static final Logger log = LoggerFactory.getLogger(impl.class);
 
-    @RequestMapping("/test")
-    public String tedt() {
-        return "hello world!";
-    }
-
+    /***
+     * 设备控制接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/deviceControl", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String deviceControl(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
@@ -83,6 +88,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
+    /***
+     * 查询设备是否在线的接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/isConnected", method = RequestMethod.GET)
     public String connected(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】connected Start");
@@ -110,6 +121,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
+    /***
+     * 设备绑定接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/boxIdCreate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String boxIdCreate(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
@@ -137,21 +154,6 @@ public class impl {
                     ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                     session.writeAndFlush(replyString.duplicate());
                     result.put("result", Util.VALUE_STRING_ONE);
-//                        session.writeAndFlush(writeDoc.asXML()).addListener((ChannelFutureListener) future -> {
-//                            if (future.isSuccess()){
-//                                // 数据已经被成功发送
-//                                // 正常状态
-//                                result.put("result", Util.VALUE_STRING_ONE);
-//                                log.info("数据已经发送给机器,result="+result);
-//                            }else {
-//                                // 数据发送失败
-//                                // 正常状态
-//                                log.info("数据发送给机器失败");
-//                                result.put("result", Util.VALUE_STRING_ZERO);
-//                            }
-//                            log.debug("WriteFuture结果：" + future.isSuccess());
-//                        });
-
 
                     log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                             .remoteAddress().toString(), macAddress, writeDoc.asXML()));
@@ -172,6 +174,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
+    /***
+     * 设备解绑接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/boxIdDelete", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String boxIdDelete(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】boxIdDelete Start");
@@ -219,6 +227,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
+    /***
+     * 通知WIFI版本更新的接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/updateVersion", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String updateVersion(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】updateVersion Start");
@@ -301,6 +315,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
+    /***
+     * 核实WIFI是否需要更新的接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/isNeedUpdate", method = RequestMethod.GET)
     public String checkWifiVer(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】checkWifiVer Start");
@@ -353,16 +373,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-    //
-    //
-    //    /**
-    //     * @param servletRequest
-    //     * @param servletResponse
-    //     * @return
-    //     */
-    //    @POST
-    //    @Path("/machverVersion")
-    //    @Produces({MediaType.APPLICATION_JSON})
+    /***
+     * 通知主板固件更新的接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/machverVersion", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public String machverVersion(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】machverVersion Start");
@@ -445,6 +461,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
+    /***
+     * 核实主板固件是否需要更新的接口
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/isMachverUpdate", method = RequestMethod.GET)
     public String isMachverUpdate(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
@@ -500,7 +522,12 @@ public class impl {
         return JsonUtil.getJsonFromMap(result);
     }
 
-
+    /***
+     * 获取所有在线的设备
+     * @param servletRequest
+     * @param servletResponse
+     * @return result=0-->失败/1-->成功
+     */
     @RequestMapping(value = "/socket/getOnlineDevice", method = RequestMethod.GET)
     public String getAllOnlineDevice(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         log.info("【TCPSERVER】getAllOnlineDevice Start");
