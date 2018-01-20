@@ -30,7 +30,7 @@ public class KVStoreUtils {
     //private static final String host = KVStoreConfig.getValue("kvs_host");
 //	private static final String host = "6a3c057beb624b40.m.cnbja.kvstore.aliyuncs.com";
 //    private static final String host = "127.0.0.1";
-    private static final String host = "localhost";
+    private static final String host = "10.191.200.129";
     //private static final int port = Integer.valueOf(KVStoreConfig.getValue("kvs_port"));
     private static final int port = 6379;//密码123
     private static final String instanceId = "NmEzYzA1N2JlYjYyNGI0MA==";
