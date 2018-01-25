@@ -63,7 +63,7 @@ public class KVStoreUtils {
         try {
             Jedis jedis = pool.getResource();
             jedis.hset(key, field, value);
-            log.info(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", key, field, value));
+//            log.info(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", key, field, value));
             jedis.close();
         } catch (Exception e) {
             log.error(e.toString());
@@ -74,7 +74,7 @@ public class KVStoreUtils {
         try {
             Jedis jedis = pool.getResource();
             jedis.hset(kvKety, field, value);
-            log.info(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", kvKety, field, value));
+//            log.info(MessageFormat.format("set key[{0}],field[{1}],value[{2}] to KVS", kvKety, field, value));
             jedis.close();
         } catch (Exception e) {
             log.error(e.toString());
@@ -89,7 +89,7 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             ret = jedis.hget(kvKety, field);
             jedis.close();
-            log.info(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", kvKety, field, ret));
+//            log.info(MessageFormat.format("get key[{0}],field[{1}] from KVS, value is [{2}]", kvKety, field, ret));
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -118,7 +118,7 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             ret = jedis.hdel(kvKety, field);
             jedis.close();
-            log.info(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", kvKety, field));
+//            log.info(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", kvKety, field));
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -131,7 +131,7 @@ public class KVStoreUtils {
             Jedis jedis = pool.getResource();
             ret = jedis.hdel(key, field);
             jedis.close();
-            log.info(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", key, field));
+//            log.info(MessageFormat.format("remove key[{0}],field[{1}] from KVS ", key, field));
         } catch (Exception e) {
             log.error(e.toString());
         }
