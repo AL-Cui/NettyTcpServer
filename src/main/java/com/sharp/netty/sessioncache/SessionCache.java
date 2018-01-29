@@ -62,12 +62,12 @@ public class SessionCache {
      */
     public void save(String mac, SocketChannel channel) {
         sessions.put(mac, channel);
-        log.info("Map里现存的session数量=" + sessions.size());
+        log.info("save后Map里现存的session数量=" + sessions.size());
         String clientIp = channel.remoteAddress().toString();
         KVStoreUtils.putHashmapField(mac, value);
 
-        String kvIp = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
-        log.info("Redis里目前存的IP="+kvIp);
+//        String kvIp = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
+//        log.info("Redis里目前存的IP="+kvIp);
         KVStoreUtils.putHashmapField(Util.KV_PORT_KEY, mac, clientIp);   //此处只存储唯一的ipport
 
     }
@@ -94,7 +94,7 @@ public class SessionCache {
         if (sessions.containsKey(mac)) {
             sessions.remove(mac);
         }
-        log.info("Map里现存的session数量=" + sessions.size());
+        log.info("remove后，Map里现存的session数量=" + sessions.size());
         String ipValue = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
         if (ipValue != null){
             KVStoreUtils.removeHahmapField(mac);

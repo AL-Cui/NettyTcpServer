@@ -1,6 +1,7 @@
 package com.sharp.netty.handler;
 
 import com.sharp.netty.common.DeviceInfo;
+import com.sharp.netty.common.KVStoreUtils;
 import com.sharp.netty.common.StringUtil;
 import com.sharp.netty.sessioncache.SessionCache;
 import com.sharp.netty.utils.AgentUtil;
@@ -13,6 +14,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -25,13 +27,14 @@ import java.util.*;
 public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatServerHandler.class);
     private final static Map<String, String> firstHeartBeatMap = new HashMap<>();
-    private static AttributeKey<String> MACADDRESS = AttributeKey.valueOf("macAddress");
+    public static AttributeKey<String> MACADDRESS = AttributeKey.valueOf("macAddress");
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        logger.info("->server:" + msg.toString());
+//        logger.info("->server:" + msg.toString());
         readXML(msg.toString(), ctx);
+        ReferenceCountUtil.release(msg);
     }
 
     @Override
@@ -187,18 +190,13 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
         logger.info("当前处理Mac地址 : " + mac);
         if (StringUtil.isNotBlank(mac)) {
             //接收心跳包后更新SessionCache和ChannelHandlerContext的MACADDRESS属性
-            SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
-            ctx.attr(MACADDRESS).set(mac);
-            // 如果是第一次心跳包判断版本更新
-            if (!firstHeartBeatMap.containsKey(mac)) {
-                logger.info("ctx=" + ctx.toString());
-                firstHeartBeatMap.put(mac, mac);
 
-                // 判断当前wifi版本是否需要更新
-                wifiUpdate(mac, wifiVersion);
-
-                purifierUpdate(mac, machverVersion);
+            String ipPortString = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
+            if (!ctx.channel().remoteAddress().toString().equals(ipPortString)){
+                SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
+                ctx.attr(MACADDRESS).set(mac);
             }
+
             // DocumentHelper提供了创建Document对象的方法
             Document writeDoc = DocumentHelper.createDocument();
             // 添加节点：tcp_msg
@@ -218,9 +216,20 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
             // 设置节点信息
             server_time.setText(String.valueOf(System.currentTimeMillis()));
             // 将document文档对象直接转换成字符串
-            logger.info("接受心跳后服务端发送的内容: " + writeDoc.asXML() + "  ToMac" + mac);
+//            logger.info("接受心跳后服务端发送的内容: " + writeDoc.asXML() + "  ToMac" + mac);
             ByteBuf HEARTBEATRES = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML() + "\r\n", CharsetUtil.UTF_8));
             ctx.channel().writeAndFlush(HEARTBEATRES.duplicate());
+            // 如果是第一次心跳包判断版本更新
+            if (!firstHeartBeatMap.containsKey(mac)) {
+                logger.info("ctx=" + ctx.toString());
+                firstHeartBeatMap.put(mac, mac);
+                SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
+                ctx.attr(MACADDRESS).set(mac);
+                // 判断当前wifi版本是否需要更新
+//                wifiUpdate(mac, wifiVersion);
+//
+//                purifierUpdate(mac, machverVersion);
+            }
         }
 
     }
@@ -276,16 +285,19 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
         logger.info("wifiUpdate Strat-->" + wifiVersion);
 
         DeviceInfo deviceInfo = AgentUtil.getDeviceInfoByMac(mac);
+        logger.info("deviceInfo="+deviceInfo.toString());
         if (deviceInfo != null) {
             String newWifiVersion = WifiConfig.getValue(deviceInfo.getDeviceKind());
             String nowWifiVersion = deviceInfo.getWifiVersion();
+            logger.info("wifiVersion="+wifiVersion+"newWifiVersion="+newWifiVersion+"newWifiVersion="+nowWifiVersion);
             if (StringUtil.isNotBlank(wifiVersion)) {
                 if (!wifiVersion.equals(nowWifiVersion)) {
                     // 更新db中wifi的版本号
                     DeviceInfo deviceInfoInput = new DeviceInfo();
-                    deviceInfoInput.setMacAddress(deviceInfo.getMacAddress());   //带-
+                    deviceInfoInput.setMacAddress(deviceInfo.getMacAddress());
                     deviceInfoInput.setWifiVersion(wifiVersion);
-                    AgentUtil.updateDeviceInfo(deviceInfoInput, "wifi");
+                   String resultFlag =  AgentUtil.updateDeviceInfo(deviceInfoInput, "wifi");
+                   logger.info("resultFlag="+resultFlag);
                 }
                 //通知Agent那边需要更新
                 if (StringUtil.isCompareTo(newWifiVersion, wifiVersion)) {

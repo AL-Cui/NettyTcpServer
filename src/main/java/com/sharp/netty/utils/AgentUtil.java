@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class AgentUtil {
     //	private static final String AGENT_SERVER_URL = "http://localhost:18080/SharpCloudAgent/agent";
-    private static final String AGENT_SERVER_URL = "iotwater-rd.smart-blink.com/SharpCloudAgent";
+    private static final String AGENT_SERVER_URL = "http://10.191.200.13:18080/SharpCloudAgent";
 
     /**
      * @param mac
@@ -133,7 +133,7 @@ public class AgentUtil {
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("mac", mac);
         String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
-        String result = HttpUtils.sendHttpPostRequest(url, bodyString);
+        String result = OkHttpClientUtils.sendHttpPostRequest(url, bodyString);
         if (StringUtil.isNotBlank(result)) {
             deviceInfo = (DeviceInfo) JsonUtil.getBeanFromJson(result, DeviceInfo.class);
         }
@@ -191,7 +191,7 @@ public class AgentUtil {
 
         String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
 
-        updateDeviceInfoFlg = HttpUtils.sendHttpPostRequest(url, bodyString);
+        updateDeviceInfoFlg = OkHttpClientUtils.sendHttpPostRequest(url, bodyString);
 
         return updateDeviceInfoFlg;
     }
@@ -205,15 +205,18 @@ public class AgentUtil {
      */
     public static void sendUpdateMessage(String mac, String newWifiVersion, String wifi) {
         String userOpenId = AgentUtil.getDeviceBindMasterByMac(mac);
-        String url = AGENT_SERVER_URL + "/mac/sendUpdateMessage?appSecret=" + Util.APP_SECRET;
-        Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("mac", mac);
-        jsonMap.put("userOpenId", userOpenId);
-        jsonMap.put("kind", wifi);
-        jsonMap.put("newVersion",newWifiVersion);
+        if (userOpenId  != null){
+            String url = AGENT_SERVER_URL + "/mac/sendUpdateMessage?appSecret=" + Util.APP_SECRET;
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("mac", mac);
+            jsonMap.put("userOpenId", userOpenId);
+            jsonMap.put("kind", wifi);
+            jsonMap.put("newVersion",newWifiVersion);
 
-        String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
-        HttpUtils.sendHttpPostRequest(url,bodyString);
+            String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
+            OkHttpClientUtils.sendHttpPostRequest(url,bodyString);
+        }
+
 
     }
 
@@ -227,9 +230,10 @@ public class AgentUtil {
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("mac", mac);
         String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
-        String result = HttpUtils.sendHttpPostRequest(url, bodyString);
+        String result = OkHttpClientUtils.sendHttpPostRequest(url, bodyString);
         DeviceBindMaster resultObject = (DeviceBindMaster) JsonUtil.getBeanFromJson(result,DeviceBindMaster.class);
         String userOpenId = resultObject.getData();
         return userOpenId;
+
     }
 }

@@ -11,6 +11,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -66,7 +67,7 @@ public class impl {
                         log.info("控制发送信息：" + writeDoc.asXML());
                         ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
-//                        session.writeAndFlush(writeDoc.asXML()+"\r\n");
+                        ReferenceCountUtil.release(replyString);
                         // 正常状态
                         result.put("result", Util.VALUE_STRING_ONE);
                     } catch (Exception e) {
@@ -153,6 +154,7 @@ public class impl {
                     // 将document文档对象直接转换成字符串
                     ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                     session.writeAndFlush(replyString.duplicate());
+                    ReferenceCountUtil.release(replyString);
                     result.put("result", Util.VALUE_STRING_ONE);
 
                     log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
@@ -204,6 +206,7 @@ public class impl {
                         // log.info("发送信息：" + writeDoc.asXML());
                         ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
+                        ReferenceCountUtil.release(replyString);
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
                         // 正常状态
@@ -294,6 +297,7 @@ public class impl {
                         // 将document文档对象直接转换成字符串
                         ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
+                        ReferenceCountUtil.release(replyString);
 
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
@@ -440,6 +444,7 @@ public class impl {
                         // 将document文档对象直接转换成字符串
                         ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
+                        ReferenceCountUtil.release(replyString);
 
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));

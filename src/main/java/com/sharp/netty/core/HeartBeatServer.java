@@ -1,7 +1,9 @@
 package com.sharp.netty.core;
 
+import com.sharp.netty.common.KVStoreUtils;
 import com.sharp.netty.handler.HeartBeatServerHandler;
 import com.sharp.netty.listener.AcceptorIdleStateTrigger;
+import com.sharp.netty.utils.Util;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -21,6 +23,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.ResourceLeakDetector;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
@@ -55,13 +58,16 @@ public class HeartBeatServer {
      *
      */
     public void start() {
-
+        //启动服务端时清空Redis
+        KVStoreUtils.clearKey();
+        KVStoreUtils.clearKey(Util.KV_PORT_KEY);
         String osName = System.getProperty("os.name");
         logger.info("操作系统是" + osName);
         if (osName.equals("Linux")) {
             EpollEventLoopGroup bossGroup = new EpollEventLoopGroup(); //这里可以传入参数，默认是cpu核数*2
             EpollEventLoopGroup workerGroup = new EpollEventLoopGroup(); //这里可以传入参数，默认是cpu核数*2
             try {
+                ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);   //提高内存泄漏监控级别，
                 ServerBootstrap serverBootstrap = new ServerBootstrap()
                         .group(bossGroup, workerGroup)
                         .channel(EpollServerSocketChannel.class)

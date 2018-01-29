@@ -15,6 +15,7 @@ public class OkHttpClientUtils {
     private static final OkHttpClient okHttpClient = new OkHttpClient();
 
 
+
     public static String sendHttpGetRequest(String url) {
         String resultString = null;
         Request.Builder requestBuilder = new Request.Builder().url(url);

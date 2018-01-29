@@ -1,5 +1,6 @@
 package com.sharp.netty.listener;
 
+import com.sharp.netty.handler.HeartBeatServerHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,6 +21,8 @@ public class AcceptorIdleStateTrigger extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent){
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.READER_IDLE){
+                    logger.info("60s没有心跳包，空闲关闭");
+
                 ctx.close();
             }
         }else {

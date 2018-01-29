@@ -138,31 +138,31 @@ public class KVStoreUtils {
         return ret;
     }
 
-//    public static Long clearKey(String kvKety) {
-//        Long ret = null;
-//        try {
-//            Jedis jedis = pool.getResource();
-//            ret = jedis.del(kvKety);
-//            jedis.close();
-//            log.info(MessageFormat.format("remove key [{0}] from KVS ", kvKety));
-//        } catch (Exception e) {
-//            log.error(e.toString());
-//        }
-//        return ret;
-//    }
-//
-//    public static Long clearKey() {
-//        Long ret = null;
-//        try {
-//            Jedis jedis = pool.getResource();
-//            ret = jedis.del(key);
-//            jedis.close();
-//            log.info(MessageFormat.format("remove key [{0}] from KVS ", key));
-//        } catch (Exception e) {
-//            log.error(e.toString());
-//        }
-//        return ret;
-//    }
+    public static Long clearKey(String kvKety) {
+        Long ret = null;
+        try {
+            Jedis jedis = pool.getResource();
+            ret = jedis.del(kvKety);
+            jedis.close();
+            log.info(MessageFormat.format("remove key [{0}] from KVS ", kvKety));
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        return ret;
+    }
+
+    public static Long clearKey() {
+        Long ret = null;
+        try {
+            Jedis jedis = pool.getResource();
+            ret = jedis.del(key);
+            jedis.close();
+            log.info(MessageFormat.format("remove key [{0}] from KVS ", key));
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        return ret;
+    }
 
 //    private static String EncryptProperty(String propertyValue) {
 //
