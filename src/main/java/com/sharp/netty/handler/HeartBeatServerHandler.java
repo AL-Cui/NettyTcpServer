@@ -189,13 +189,8 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
         logger.info("当前处理Mac地址 : " + mac);
         if (StringUtil.isNotBlank(mac)) {
-            //接收心跳包后更新SessionCache和ChannelHandlerContext的MACADDRESS属性
 
-            String ipPortString = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
-            if (!ctx.channel().remoteAddress().toString().equals(ipPortString)){
-                SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
-                ctx.attr(MACADDRESS).set(mac);
-            }
+
 
             // DocumentHelper提供了创建Document对象的方法
             Document writeDoc = DocumentHelper.createDocument();
@@ -219,16 +214,24 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 //            logger.info("接受心跳后服务端发送的内容: " + writeDoc.asXML() + "  ToMac" + mac);
             ByteBuf HEARTBEATRES = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML() + "\r\n", CharsetUtil.UTF_8));
             ctx.channel().writeAndFlush(HEARTBEATRES.duplicate());
+            ReferenceCountUtil.release(HEARTBEATRES);
+
             // 如果是第一次心跳包判断版本更新
             if (!firstHeartBeatMap.containsKey(mac)) {
                 logger.info("ctx=" + ctx.toString());
                 firstHeartBeatMap.put(mac, mac);
-                SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
-                ctx.attr(MACADDRESS).set(mac);
+//                SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
+//                ctx.attr(MACADDRESS).set(mac);
                 // 判断当前wifi版本是否需要更新
 //                wifiUpdate(mac, wifiVersion);
 //
 //                purifierUpdate(mac, machverVersion);
+            }
+            //接收心跳包后更新SessionCache和ChannelHandlerContext的MACADDRESS属性
+            String ipPortString = KVStoreUtils.getHashmapField(Util.KV_PORT_KEY, mac);
+            if (!ctx.channel().remoteAddress().toString().equals(ipPortString)){
+                SessionCache.getInstance().save(mac, (SocketChannel) ctx.channel());
+                ctx.attr(MACADDRESS).set(mac);
             }
         }
 
@@ -269,6 +272,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
             logger.debug("发送信息：" + writeDoc.asXML());
             ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML(), CharsetUtil.UTF_8));
             session.writeAndFlush(replyString.duplicate());
+            ReferenceCountUtil.release(replyString);
 
         }
 
