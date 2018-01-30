@@ -1,24 +1,41 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
+# Compiled class file
+*.class
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
+# Log file
+*.log
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Others
+.idea/
 *.iml
-*.ipr
 
-### NetBeans ###
-nbproject/private/
+# Built application files
+*.apk
+*.ap_
+
+# Files for the Dalvik VM
+*.dex
+
+# Generated files
+bin/
+gen/
+
+# Gradle files
+.gradle/
 build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
