@@ -85,12 +85,14 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
 
             } else if (Util.MSG_VALUE_NOTIFY.equals(rootNode.elementTextTrim(Util.NODE_MSG))) {
                 if (Util.MSG_VALUE_LINKRESET.equals(rootNode.elementTextTrim(Util.NODE_CMD))) {    //收到从机器端解绑
+
                     // mac address
                     Iterator<Element> iterator = rootNode.elementIterator(Util.NODE_DATA);
                     while (iterator.hasNext()) {
                         Element macNode = iterator.next();
                         if (macNode != null) {
                             mac = macNode.elementTextTrim(Util.NODE_MAC_ADDRESS);
+                            logger.info("收到机器端解绑指令，Mac="+mac);
 //                            ctx.channel().attr(new AttributeKey<>("mac"));
 //                            SocketChannel.setAttribute("mac", mac);
                             // 解绑所有用户
@@ -269,7 +271,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
             root.addElement(Util.NODE_MSG).setText(Util.MSG_VALUE_CTRLNOTIFY);
             // 添加节点 : cmd ,并添加内容
             root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE_BOXDELETE);
-            logger.debug("发送信息：" + writeDoc.asXML());
+            logger.debug("机器端解绑发送给机器的信息：" + writeDoc.asXML());
             ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML(), CharsetUtil.UTF_8));
             session.writeAndFlush(replyString.duplicate());
             ReferenceCountUtil.release(replyString);

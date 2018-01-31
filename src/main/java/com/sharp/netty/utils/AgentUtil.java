@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class AgentUtil {
     //	private static final String AGENT_SERVER_URL = "http://localhost:18080/SharpCloudAgent/agent";
-    private static final String AGENT_SERVER_URL = "http://10.191.200.13:18080/SharpCloudAgent";
+    private static final String AGENT_SERVER_URL = "http://10.191.201.13:18080/SharpCloudAgent";
 
     /**
      * @param mac
@@ -110,14 +110,25 @@ public class AgentUtil {
      * @param mac
      * @return
      */
+//    public static String unbindAllUser(String mac) {
+//        String result = "";
+//
+//        String url = AGENT_SERVER_URL + "/user/unbindAllUser?";
+//        url += HttpUtils.addUrlParamPair("mac", mac);
+//        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
+//
+//        result = HttpUtils.sendHttpPostRequest(url, "{}");
+//
+//        return result;
+//    }
     public static String unbindAllUser(String mac) {
-        String result = "";
+        String result;
 
-        String url = AGENT_SERVER_URL + "/user/unbindAllUser?";
-        url += HttpUtils.addUrlParamPair("mac", mac);
-        url += HttpUtils.addUrlParamPair("appSecret", Util.APP_SECRET);
-
-        result = HttpUtils.sendHttpPostRequest(url, "{}");
+        String url = AGENT_SERVER_URL + "/user/unbindAllUser";
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("mac", mac);
+        String bodyString = JsonUtil.getJsonFromMapObject(jsonMap);
+        result = OkHttpClientUtils.sendHttpPostRequest(url, bodyString);
 
         return result;
     }

@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.text.MessageFormat;
 
 public class OkHttpClientUtils {
+    private static final Logger log = LoggerFactory.getLogger(OkHttpClientUtils.class);
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private static final Logger logger = LoggerFactory.getLogger(OkHttpClientUtils.class);
@@ -37,7 +39,7 @@ public class OkHttpClientUtils {
 
     public static String sendHttpPostRequest(String url, String body) {
         String resultString = null;
-
+        log.info(MessageFormat.format("send HTTP POST reqeust to [{0}],content[{1}]", url, body));
         Request request = new Request.Builder()
                 .url(url)
                 .post(RequestBody.create(JSON,body))
@@ -46,6 +48,7 @@ public class OkHttpClientUtils {
         try {
           response = okHttpClient.newCall(request).execute();
           resultString = response.body().string();
+          logger.info("POST请求的结果="+resultString + "POST请求返回的code="+response.networkResponse().toString());
         } catch (IOException e) {
             e.printStackTrace();
             
