@@ -32,9 +32,13 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-//        logger.info("->server:" + msg.toString());
-        readXML(msg.toString(), ctx);
-        ReferenceCountUtil.release(msg);
+        try {
+            readXML(msg.toString(), ctx);
+        }finally {
+            ReferenceCountUtil.release(msg);
+        }
+
+
     }
 
     @Override

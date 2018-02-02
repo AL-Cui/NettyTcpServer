@@ -48,9 +48,11 @@ public class impl {
         log.info("【TCPSERVER】deviceControl Start");
         Map<String, String> result = new HashMap<>();
         String appSecret = servletRequest.getParameter("appSecret");
+        ByteBuf replyString = null;
         try {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
+
                 log.info(MessageFormat.format("[deviceControl] invoked, PARAM: macAddress[{0}]", macAddress));
                 SocketChannel session = SessionCache.getInstance().isExists(macAddress);
                 // 连接保持判断
@@ -65,9 +67,9 @@ public class impl {
                         // 添加节点:cmd ,设置节点信息
                         root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE_CHECKCMD);
                         log.info("控制发送信息：" + writeDoc.asXML());
-                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
-                        ReferenceCountUtil.release(replyString);
+                        
                         // 正常状态
                         result.put("result", Util.VALUE_STRING_ONE);
                     } catch (Exception e) {
@@ -84,6 +86,8 @@ public class impl {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }finally {
+            ReferenceCountUtil.release(replyString);
         }
         log.info("【TCPSERVER】deviceControl End");
         return JsonUtil.getJsonFromMap(result);
@@ -134,6 +138,7 @@ public class impl {
         log.info("【TCPSERVER】boxIdCreate Start");
         Map<String, String> result = new HashMap<>();
         String appSecret = servletRequest.getParameter("appSecret");
+        ByteBuf replyString = null;
         try {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
@@ -152,9 +157,9 @@ public class impl {
                     // 添加节点:cmd,设置节点信息
                     root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE);
                     // 将document文档对象直接转换成字符串
-                    ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                    replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                     session.writeAndFlush(replyString.duplicate());
-                    ReferenceCountUtil.release(replyString);
+
                     result.put("result", Util.VALUE_STRING_ONE);
 
                     log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
@@ -171,6 +176,8 @@ public class impl {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }finally {
+            ReferenceCountUtil.release(replyString);
         }
         log.info("【TCPSERVER】boxIdCreate End,result=" + result);
         return JsonUtil.getJsonFromMap(result);
@@ -187,6 +194,7 @@ public class impl {
         log.info("【TCPSERVER】boxIdDelete Start");
         Map<String, String> result = new HashMap<>();
         String appSecret = servletRequest.getParameter("appSecret");
+        ByteBuf replyString = null;
         try {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
@@ -204,9 +212,9 @@ public class impl {
                         // 添加节点 : cmd ,并添加内容
                         root.addElement(Util.NODE_CMD).setText(Util.CMD_VALUE_BOXDELETE);
                         // log.info("发送信息：" + writeDoc.asXML());
-                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
-                        ReferenceCountUtil.release(replyString);
+
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
                         // 正常状态
@@ -225,6 +233,8 @@ public class impl {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }finally {
+            ReferenceCountUtil.release(replyString);
         }
         log.info("【TCPSERVER】boxIdDelete End");
         return JsonUtil.getJsonFromMap(result);
@@ -241,6 +251,7 @@ public class impl {
         log.info("【TCPSERVER】updateVersion Start");
         Map<String, String> result = new HashMap<>();
         String appSecret = servletRequest.getParameter("appSecret");
+        ByteBuf replyString = null;
         try {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
@@ -295,9 +306,9 @@ public class impl {
                         // 添加节点:version_number
                         data.addElement(Util.NODE_VERSION).setText(version);
                         // 将document文档对象直接转换成字符串
-                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
-                        ReferenceCountUtil.release(replyString);
+
 
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
@@ -314,6 +325,8 @@ public class impl {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }finally {
+            ReferenceCountUtil.release(replyString);
         }
         log.info("【TCPSERVER】updateVersion End");
         return JsonUtil.getJsonFromMap(result);
@@ -388,6 +401,7 @@ public class impl {
         log.info("【TCPSERVER】machverVersion Start");
         Map<String, String> result = new HashMap<>();
         String appSecret = servletRequest.getParameter("appSecret");
+        ByteBuf replyString = null;
         try {
             if (Util.APP_SECRET.equals(appSecret)) {
                 String macAddress = servletRequest.getParameter("macAddress");
@@ -442,9 +456,9 @@ public class impl {
                         // 添加节点:version_number
                         data.addElement(Util.NODE_VERSION).setText(version);
                         // 将document文档对象直接转换成字符串
-                        ByteBuf replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
+                        replyString = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(writeDoc.asXML()+"\r\n", CharsetUtil.UTF_8));
                         session.writeAndFlush(replyString.duplicate());
-                        ReferenceCountUtil.release(replyString);
+
 
                         log.info(MessageFormat.format("send message to[{0}] MAC[{1}] content:{2}", session
                                 .remoteAddress().toString(), macAddress, writeDoc.asXML()));
@@ -461,6 +475,8 @@ public class impl {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }finally {
+            ReferenceCountUtil.release(replyString);
         }
         log.info("【TCPSERVER】machverVersion End");
         return JsonUtil.getJsonFromMap(result);
